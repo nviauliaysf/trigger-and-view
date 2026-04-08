@@ -1,73 +1,79 @@
-🚀 ServiceTrack DBMS
-Sistem Manajemen Layanan & Inventaris Berbasis MySQL
+# 🚀 ServiceTrack DBMS
+### Sistem Manajemen Layanan & Inventaris Berbasis MySQL
 
-📌 Deskripsi Project
+---
 
-ServiceTrack DBMS merupakan sebuah sistem database berbasis MySQL yang dirancang untuk mengelola proses layanan pelanggan serta penggunaan inventaris secara terintegrasi. Sistem ini dibuat untuk mensimulasikan bagaimana sebuah layanan servis menangani transaksi pelanggan sekaligus mengontrol penggunaan barang secara otomatis.
+## 📌 Deskripsi Project
 
-Dalam implementasinya, setiap pelanggan yang melakukan layanan akan tercatat dalam tabel servis, kemudian setiap barang yang digunakan selama proses layanan akan disimpan pada tabel detail_servis. Data barang tersebut diambil dari tabel sparepart yang juga menyimpan informasi stok dan harga. Semua tabel ini saling terhubung menggunakan relasi sehingga membentuk satu kesatuan sistem yang utuh.
+**ServiceTrack DBMS** adalah sebuah sistem database berbasis MySQL yang dirancang untuk mengelola proses layanan pelanggan serta penggunaan inventaris secara terstruktur dan otomatis. Sistem ini menggambarkan bagaimana sebuah layanan dapat mencatat transaksi, mengelola penggunaan barang, serta menjaga konsistensi data tanpa harus bergantung sepenuhnya pada aplikasi.
 
-Keunggulan utama dari project ini adalah penggunaan trigger yang memungkinkan database bekerja secara otomatis. Database tidak hanya menyimpan data, tetapi juga melakukan validasi, perhitungan, dan pengelolaan data secara mandiri. Selain itu, digunakan juga view untuk mempermudah pengambilan data laporan tanpa harus menulis query yang kompleks.
+Dalam sistem ini, data pelanggan disimpan pada tabel pelanggan, kemudian setiap aktivitas layanan dicatat pada tabel servis. Setiap layanan dapat memiliki beberapa penggunaan barang yang dicatat dalam tabel detail_servis. Barang yang digunakan berasal dari tabel sparepart yang menyimpan informasi stok dan harga.
 
-Dengan pendekatan ini, database berperan sebagai pusat logika sistem, bukan hanya sebagai tempat penyimpanan data.
+Yang membuat sistem ini lebih unggul dibanding database biasa adalah penggunaan trigger. Trigger memungkinkan database untuk menjalankan logika secara otomatis, seperti validasi stok, pengurangan stok, serta perhitungan total biaya. Selain itu, view digunakan untuk menyederhanakan proses pengambilan data laporan sehingga lebih mudah dibaca dan digunakan.
 
-⚡ Fitur Utama
+Dengan pendekatan ini, database tidak hanya berfungsi sebagai tempat penyimpanan, tetapi juga sebagai pengatur logika sistem.
 
-Sistem ini dibangun dengan struktur relasional yang memastikan setiap data memiliki keterkaitan yang jelas. Ketika sebuah data pelanggan dibuat, data tersebut dapat digunakan dalam transaksi servis, dan setiap transaksi akan memiliki detail penggunaan barang yang terhubung langsung dengan data sparepart. Relasi ini membantu menjaga konsistensi data dan mempermudah proses pencarian informasi.
+---
 
-Selain itu, sistem ini memanfaatkan trigger untuk mengatur berbagai proses otomatis. Saat data dimasukkan ke dalam tabel detail_servis, sistem secara otomatis akan mengecek apakah stok mencukupi. Jika stok tidak mencukupi, maka data tidak akan disimpan. Namun jika stok tersedia, sistem langsung mengurangi stok dan menambahkan total biaya ke dalam tabel servis tanpa perlu perhitungan manual.
+## ⚡ Fitur Utama
 
-Penggunaan view dalam sistem ini juga memberikan kemudahan dalam menampilkan data. View berfungsi sebagai tabel virtual yang menyimpan hasil query tertentu, sehingga pengguna dapat melihat laporan tanpa harus menulis query join yang panjang setiap kali dibutuhkan.
+Sistem ini menggunakan relasi antar tabel yang memastikan setiap data memiliki hubungan yang jelas. Data pelanggan terhubung dengan data servis, kemudian data servis terhubung dengan detail penggunaan barang. Struktur ini membuat data menjadi lebih rapi, konsisten, dan mudah ditelusuri.
 
-Dengan adanya kombinasi antara relasi, trigger, dan view, sistem ini menjadi lebih efisien, aman, dan siap digunakan dalam skenario nyata.
+Selain itu, sistem memanfaatkan trigger untuk menangani proses otomatis. Setiap kali data dimasukkan ke dalam detail_servis, sistem akan langsung mengecek apakah stok mencukupi. Jika tidak, maka proses akan dibatalkan. Jika stok cukup, sistem akan langsung mengurangi stok dan menambahkan total biaya tanpa perlu perhitungan manual.
 
+View juga digunakan untuk mempermudah pengambilan data. Dengan view, pengguna tidak perlu menulis query join yang panjang karena data sudah disiapkan dalam bentuk yang lebih sederhana.
 
-🗄️ Langkah-Langkah Setup Database
+---
 
-Langkah pertama yang harus dilakukan adalah membuat database sebagai tempat penyimpanan seluruh data. Setelah database dibuat, database tersebut perlu diaktifkan agar semua perintah SQL yang dijalankan akan tersimpan di dalamnya.
+## 🗄️ Langkah-Langkah Setup Database
 
-sql
+Langkah pertama adalah membuat database dan mengaktifkannya:
+
+```sql
 CREATE DATABASE bengkel;
 USE bengkel;
+````
 
-Perintah ini akan membuat database bernama *bengkel* dan langsung menggunakannya.
+Perintah ini akan membuat database baru dan menjadikannya aktif.
 
-🧱 Struktur Tabel dan Penjelasannya
+---
 
-Tahap berikutnya adalah membuat tabel-tabel yang menjadi fondasi sistem. Tabel pertama yang dibuat adalah tabel pelanggan yang berfungsi untuk menyimpan data pelanggan.
+## 🧱 Struktur Tabel dan Penjelasannya
 
-sql
+Tabel pelanggan digunakan untuk menyimpan data pelanggan yang melakukan layanan.
+
+```sql
 CREATE TABLE pelanggan (
   id_pelanggan INT AUTO_INCREMENT PRIMARY KEY,
-  nama VARCHAR(100));
+  nama VARCHAR(100)
+);
+```
 
-Tabel ini memiliki kolom id_pelanggan sebagai primary key yang akan terisi otomatis, serta kolom nama untuk menyimpan nama pelanggan.
+Tabel servis digunakan untuk mencatat transaksi layanan yang dilakukan oleh pelanggan.
 
-Selanjutnya dibuat tabel servis yang digunakan untuk mencatat transaksi layanan. Tabel ini memiliki hubungan dengan tabel pelanggan melalui id_pelanggan.
-
-sql
+```sql
 CREATE TABLE servis (
   id_servis INT AUTO_INCREMENT PRIMARY KEY,
   id_pelanggan INT,
   total_biaya INT DEFAULT 0,
-  FOREIGN KEY (id_pelanggan) REFERENCES pelanggan(id_pelanggan));
+  FOREIGN KEY (id_pelanggan) REFERENCES pelanggan(id_pelanggan)
+);
+```
 
-Kolom total_biaya digunakan untuk menyimpan total biaya layanan yang akan diperbarui secara otomatis oleh trigger.
+Tabel sparepart menyimpan data barang yang tersedia, termasuk stok dan harga.
 
-Tabel berikutnya adalah tabel sparepart yang berfungsi untuk menyimpan data barang beserta stok dan harganya.
-
-sql
+```sql
 CREATE TABLE sparepart (
   id_sparepart INT AUTO_INCREMENT PRIMARY KEY,
   nama_sparepart VARCHAR(100),
   stok INT,
-  harga INT);
+  harga INT
+);
+```
 
-Tabel ini sangat penting karena menjadi sumber data barang yang digunakan dalam transaksi servis.
+Tabel detail_servis berfungsi untuk mencatat barang yang digunakan dalam setiap transaksi servis.
 
-Terakhir adalah tabel detail_servis yang digunakan untuk mencatat barang apa saja yang digunakan dalam setiap transaksi.
-
-sql
+```sql
 CREATE TABLE detail_servis (
   id_detail INT AUTO_INCREMENT PRIMARY KEY,
   id_servis INT,
@@ -75,15 +81,17 @@ CREATE TABLE detail_servis (
   jumlah INT,
   harga INT,
   FOREIGN KEY (id_servis) REFERENCES servis(id_servis),
-  FOREIGN KEY (id_sparepart) REFERENCES sparepart(id_sparepart));
+  FOREIGN KEY (id_sparepart) REFERENCES sparepart(id_sparepart)
+);
+```
 
-Tabel ini menghubungkan servis dengan sparepart dan menjadi pusat perhitungan dalam sistem.
+---
 
-🧪 Data Awal untuk Pengujian
+## 🧪 Data Awal
 
-Untuk memastikan sistem dapat langsung digunakan, data awal dimasukkan ke dalam tabel.
+Data awal digunakan untuk pengujian sistem agar bisa langsung dicoba.
 
-sql
+```sql
 INSERT INTO pelanggan (nama) VALUES ('Budi'), ('Andi');
 
 INSERT INTO sparepart (nama_sparepart, stok, harga) VALUES
@@ -93,26 +101,22 @@ INSERT INTO sparepart (nama_sparepart, stok, harga) VALUES
 INSERT INTO servis (id_pelanggan) VALUES
 (1),
 (2);
+```
 
-Data ini digunakan untuk melakukan pengujian trigger dan view.
+---
 
-⚡ Trigger dan Penjelasannya
+## ⚡ Trigger dan Penjelasannya
 
-Trigger merupakan bagian inti dari sistem ini karena berfungsi untuk menjalankan logika secara otomatis.
+Trigger pertama digunakan untuk mengecek apakah stok mencukupi sebelum data dimasukkan.
 
-Trigger pertama digunakan untuk memvalidasi stok sebelum data dimasukkan. Sistem akan mengecek apakah jumlah barang yang diminta melebihi stok yang tersedia. Jika iya, maka transaksi akan dibatalkan.
-
-sql 
+```sql
 DELIMITER //
 CREATE TRIGGER before_insert_cek_stok
 BEFORE INSERT ON detail_servis
 FOR EACH ROW
 BEGIN
   DECLARE sisa INT;
-
-  SELECT stok INTO sisa 
-  FROM sparepart
-  WHERE id_sparepart = NEW.id_sparepart;
+  SELECT stok INTO sisa FROM sparepart WHERE id_sparepart = NEW.id_sparepart;
 
   IF sisa < NEW.jumlah THEN
     SIGNAL SQLSTATE '45000'
@@ -121,18 +125,17 @@ BEGIN
 END;
 //
 DELIMITER ;
+```
 
-Setelah data berhasil dimasukkan, trigger berikutnya akan langsung berjalan untuk mengurangi stok dan menambahkan total biaya ke dalam tabel servis.
+Trigger berikutnya berjalan setelah data dimasukkan untuk mengurangi stok dan menambahkan total biaya.
 
-sql
+```sql
 DELIMITER //
 CREATE TRIGGER after_insert_update
 AFTER INSERT ON detail_servis
 FOR EACH ROW
 BEGIN
-  UPDATE sparepart 
-  SET stok = stok - NEW.jumlah
-  WHERE id_sparepart = NEW.id_sparepart;
+  UPDATE sparepart SET stok = stok - NEW.jumlah WHERE id_sparepart = NEW.id_sparepart;
 
   UPDATE servis
   SET total_biaya = total_biaya + (NEW.jumlah * NEW.harga)
@@ -140,20 +143,18 @@ BEGIN
 END;
 //
 DELIMITER ;
+```
 
-Ketika data diubah, sistem kembali melakukan validasi agar perubahan tersebut tidak menyebabkan stok menjadi negatif.
+Trigger update memastikan perubahan data tidak menyebabkan stok menjadi negatif.
 
-sql
+```sql
 DELIMITER //
 CREATE TRIGGER before_update_cek
 BEFORE UPDATE ON detail_servis
 FOR EACH ROW
 BEGIN
   DECLARE sisa INT;
-
-  SELECT stok INTO sisa 
-  FROM sparepart
-  WHERE id_sparepart = NEW.id_sparepart;
+  SELECT stok INTO sisa FROM sparepart WHERE id_sparepart = NEW.id_sparepart;
 
   IF sisa < (NEW.jumlah - OLD.jumlah) THEN
     SIGNAL SQLSTATE '45000'
@@ -162,10 +163,11 @@ BEGIN
 END;
 //
 DELIMITER ;
+```
 
-Jika update berhasil, maka trigger berikutnya akan menyesuaikan stok dan total biaya agar tetap sesuai dengan data terbaru.
+Setelah update, sistem akan menyesuaikan stok dan total biaya.
 
-sql
+```sql
 DELIMITER //
 CREATE TRIGGER after_update_fix
 AFTER UPDATE ON detail_servis
@@ -182,10 +184,11 @@ BEGIN
 END;
 //
 DELIMITER ;
+```
 
-Sebelum data dihapus, sistem akan memastikan bahwa data tersebut valid untuk dihapus.
+Trigger delete memastikan data valid sebelum dihapus.
 
-sql 
+```sql
 DELIMITER //
 CREATE TRIGGER before_delete_cek
 BEFORE DELETE ON detail_servis
@@ -198,10 +201,11 @@ BEGIN
 END;
 //
 DELIMITER ;
+```
 
-Setelah data dihapus, trigger terakhir akan mengembalikan stok dan mengurangi total biaya servis.
+Setelah data dihapus, sistem akan mengembalikan stok dan menyesuaikan total biaya.
 
-sql 
+```sql
 DELIMITER //
 CREATE TRIGGER after_delete_fix
 AFTER DELETE ON detail_servis
@@ -217,16 +221,15 @@ BEGIN
 END;
 //
 DELIMITER ;
+```
 
-Dengan adanya trigger ini, semua proses berjalan secara otomatis dan konsisten.
+---
 
-👁️ View dan Penjelasannya
+## 👁️ View dan Penjelasannya
 
-View digunakan untuk menyederhanakan pengambilan data.
+View pertama digunakan untuk menampilkan laporan total biaya servis berdasarkan pelanggan.
 
-View pertama digunakan untuk menampilkan laporan total biaya servis beserta nama pelanggan.
-
-sql 
+```sql
 CREATE VIEW view_total_servis AS
 SELECT 
   s.id_servis,
@@ -234,10 +237,11 @@ SELECT
   s.total_biaya
 FROM servis s
 JOIN pelanggan p ON s.id_pelanggan = p.id_pelanggan;
+```
 
-View kedua digunakan untuk melihat kondisi stok barang secara langsung.
+View kedua digunakan untuk melihat kondisi stok barang.
 
-sql 
+```sql
 CREATE VIEW view_stok_sparepart AS
 SELECT 
   id_sparepart,
@@ -245,31 +249,40 @@ SELECT
   stok,
   harga
 FROM sparepart;
+```
 
-Dengan adanya view ini, pengguna tidak perlu menulis query yang kompleks.
+---
 
-🧪 Contoh Penggunaan
+## 🧪 Contoh Penggunaan
 
-Contoh berikut menunjukkan bagaimana sistem bekerja secara otomatis saat data dimasukkan.
-
-sql 
+```sql
 INSERT INTO detail_servis (id_servis, id_sparepart, jumlah, harga)
 VALUES (1, 1, 2, 10000);
+```
 
-Saat perintah ini dijalankan, sistem akan langsung mengecek stok, mengurangi stok, dan menambahkan total biaya.
+Jika jumlah melebihi stok:
 
-Jika jumlah yang dimasukkan melebihi stok, maka sistem akan menghasilkan error.
-
-sql
+```sql
 INSERT INTO detail_servis (id_servis, id_sparepart, jumlah, harga)
 VALUES (1, 1, 999, 10000);
+```
 
 Output:
+
+```
 Stok tidak cukup
+```
 
-🎯 Kesimpulan
+---
 
-Project ini menunjukkan bahwa database dapat digunakan sebagai pusat logika sistem, bukan hanya sebagai tempat penyimpanan data. Dengan memanfaatkan trigger dan view, sistem menjadi lebih otomatis, aman, dan efisien.
+## 🎯 Kesimpulan
 
-Dibandingkan database sederhana, sistem ini memiliki kemampuan untuk melakukan validasi, perhitungan, serta pengelolaan data secara mandiri. Hal ini menjadikannya lebih siap untuk digunakan dalam aplikasi nyata.
+Sistem ini menunjukkan bahwa database dapat digunakan sebagai pusat logika, bukan hanya sebagai tempat penyimpanan data. Dengan adanya trigger dan view, sistem mampu berjalan secara otomatis, menjaga konsistensi data, serta mengurangi kesalahan manusia.
 
+---
+
+## 🚀 Penutup
+
+Project ini sangat cocok dijadikan portofolio karena telah mengimplementasikan konsep database tingkat lanjut seperti relasi, trigger, dan view. Sistem ini juga sudah mendekati implementasi nyata dalam dunia industri.
+
+---
